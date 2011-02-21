@@ -1,3 +1,16 @@
+/*
+ * Copyright 2010 Gaurav Saxena
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.gaurav.tree;
 
 import java.io.Serializable;
@@ -7,6 +20,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This implementation of tree interface is done using {@link ArrayList}as underlying data structure 
+ * @author Gaurav Saxena
+ *
+ * @param <E>
+ */
 public class ArrayListTree<E> implements Tree<E>, Serializable{
 	private static final long serialVersionUID = 9188932537753945512L;
 	private ArrayList<E> nodeList = new ArrayList<E>();
@@ -80,10 +99,9 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 		}
 		return list;
 	}
-	public List<E> children(E e)
+	public List<E> children(E e) throws NodeNotFoundException
 	{
-		if(e == null)
-			return new ArrayList<E>();
+		checkNode(e);
 		int index = nodeList.indexOf(e);
 		if(index > -1)
 		{
@@ -94,7 +112,7 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 			return children;
 		}
 		else
-			return null;
+			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
 	public Collection<E> leaves() {
@@ -120,20 +138,36 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 		}
 		return list;
 	}
-	public E parent(E e)
+	public Collection<E> siblings(E e) throws NodeNotFoundException
 	{
+		checkNode(e);
+		E parent = parent(e);
+		if(parent != null)
+		{
+			List<E> children = children(parent);
+			children.remove(e);
+			return children;
+		}
+		else
+			throw new NodeNotFoundException("parent could not be found for the child object");		
+	}
+	public E parent(E e) throws NodeNotFoundException
+	{
+		if(e == null)
+			throw new IllegalArgumentException("Null nodes are not allowed");
 		int index = nodeList.indexOf(e);
 		if(index > -1)
 			return nodeList.get(parentList.get(index));
-		else
+		else if(!nodeList.isEmpty() && nodeList.get(0).equals(e))
 			return null;
+		else
+			throw new NodeNotFoundException("No node was found for object");
 	}
-	public boolean add(E parent, E child) {
+	public boolean add(E parent, E child) throws NodeNotFoundException {
+		checkNode(child);
 		if(parent == null)
 		{
-			if(nodeList.size() > 0)
-				throw new IllegalArgumentException("parent cannot be null except for root element");
-			else
+			if(nodeList.isEmpty())
 			{
 				nodeList.add(child);
 				parentList.add(-1);
@@ -141,30 +175,54 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 				size++;
 				return true;
 			}
+			else
+				throw new IllegalArgumentException("parent cannot be null except for root element");
 		}
 		int	parentIndex = nodeList.indexOf(parent);
-		if(parentIndex > -1 && nodeList.indexOf(child) == -1)
+		if(parentIndex > -1)
 		{
-			nodeList.add(child);
-			parentList.add(parentIndex);
-			childrenList.get(parentIndex).add(nodeList.size() - 1);
-			childrenList.add(new ArrayList<Integer>());
-			size++;
-			return true;
+			if(nodeList.indexOf(child) == -1)
+			{
+				nodeList.add(child);
+				parentList.add(parentIndex);
+				childrenList.get(parentIndex).add(nodeList.size() - 1);
+				childrenList.add(new ArrayList<Integer>());
+				size++;
+				return true;
+			}
+			else
+				return false;
 		}
-		return false;
+		else
+			throw new NodeNotFoundException("No node was found for object");
+	}
+	private void checkNode(E child) {
+		if(child == null)
+			throw new IllegalArgumentException("null nodes are not allowed");
 	}
 	@Override
 	public boolean add(E e) {
-		if(nodeList.size() > 0)
-			return add(nodeList.get(0), e);
-		else
-			return add(null, e);
+		try{
+			if(nodeList.isEmpty())
+				return add(null, e);
+			else
+				return add(nodeList.get(0), e);
+		}
+		catch(NodeNotFoundException ex)
+		{
+			return false;
+		}
 	}
 	public boolean addAll(E parent, Collection<? extends E> c) {
-		for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
-			add(parent, iterator.next());
-		return true;
+		try{
+			for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
+				add(parent, iterator.next());
+			return true;
+		}
+		catch(NodeNotFoundException ex)
+		{
+			return false;
+		}
 	}
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
