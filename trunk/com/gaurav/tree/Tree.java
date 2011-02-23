@@ -18,7 +18,10 @@ import java.util.Collection;
 /**
  * The tree interface is a general interface for all types an their implementations. It extends {@link Collection}
  * and thus all its methods.
- * {@link Collection} add(Object) and addAll(Collection c) methods always adds to the root
+ * {@link Collection} add(Object) and addAll(Collection c) methods always adds the first element as root and later
+ * ones as children of the root. It is better to use methods of {@link Tree} interface - add(E, E) and 
+ * add(E, Collection&lt;E&gt; c) as give better control on the tree structure.
+ * This interface doesn't guarantee any order to be maintained among the children of the tree
  * @author Gaurav Saxena
  *
  * @param <E> object type contained in the tree
@@ -78,4 +81,12 @@ public interface Tree<E> extends Collection<E>{
 	 * @return true if collection changed as a result of the operation, otherwise false
 	 */
 	public boolean addAll(E parent, Collection<? extends E> c);
+	/**
+	 * @return maximum depth of the tree
+	 */
+	public int depth();
+	/**
+	 * @return the root node or null if tree is empty
+	 */
+	public E root();
 }

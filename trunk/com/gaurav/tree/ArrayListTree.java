@@ -21,17 +21,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This implementation of tree interface is done using {@link ArrayList}as underlying data structure 
+ * This implementation of tree interface is done using {@link ArrayList}as underlying data structure. 
+ * As a result, children are maintained in insertion order under their respective parents 
  * @author Gaurav Saxena
  *
  * @param <E>
  */
-public class ArrayListTree<E> implements Tree<E>, Serializable{
+public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 	private static final long serialVersionUID = 9188932537753945512L;
 	private ArrayList<E> nodeList = new ArrayList<E>();
 	private ArrayList<Integer> parentList = new ArrayList<Integer>();
 	private ArrayList<ArrayList<Integer>> childrenList = new ArrayList<ArrayList<Integer>>();
 	private int size = 0;
+	private int depth = 0;
 	
 	public List<E> preOrderTraversal()
 	{
@@ -156,10 +158,10 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 		if(e == null)
 			throw new IllegalArgumentException("Null nodes are not allowed");
 		int index = nodeList.indexOf(e);
-		if(index > -1)
-			return nodeList.get(parentList.get(index));
-		else if(!nodeList.isEmpty() && nodeList.get(0).equals(e))
+		if(index == 0)
 			return null;
+		else if(index > 0)
+			return nodeList.get(parentList.get(index));
 		else
 			throw new NodeNotFoundException("No node was found for object");
 	}
@@ -173,6 +175,7 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 				parentList.add(-1);
 				childrenList.add(new ArrayList<Integer>());
 				size++;
+				depth++;
 				return true;
 			}
 			else
@@ -188,6 +191,13 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 				childrenList.get(parentIndex).add(nodeList.size() - 1);
 				childrenList.add(new ArrayList<Integer>());
 				size++;
+				int currentDepth = 1;
+				while(parentIndex != 0)
+				{
+					parentIndex = parentList.get(parentIndex);
+					currentDepth++;
+				}
+				depth = Math.max(currentDepth, depth);
 				return true;
 			}
 			else
@@ -326,5 +336,33 @@ public class ArrayListTree<E> implements Tree<E>, Serializable{
 	@Override
 	public int size() {
 		return size;
+	}
+	@SuppressWarnings("unchecked")
+	public Object clone()
+	{
+	    ArrayListTree<E> v = null;
+		try {
+			v = (ArrayListTree<E>) super.clone();
+			v.nodeList = (ArrayList<E>) nodeList.clone();
+			v.parentList = (ArrayList<Integer>) parentList.clone();
+			v.childrenList = new ArrayList<ArrayList<Integer>>();
+			for(int i = 0; i < childrenList.size(); i++)
+				v.childrenList.add((ArrayList<Integer>) childrenList.get(i).clone());
+			    	
+		} catch (CloneNotSupportedException e) {
+			//This should't happen because we are cloneable
+		}
+		return v;
+	}
+	@Override
+	public int depth() {
+		return depth;
+	}
+	@Override
+	public E root() {
+		if(nodeList.isEmpty())
+			return null;
+		else
+			return nodeList.get(0);
 	}
 }
