@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * This is a general purpose tree where each node is free to have any number of children
  * This implementation of tree interface is done using {@link ArrayList}as underlying data structure. 
  * As a result, children are maintained in insertion order under their respective parents 
  * @author Gaurav Saxena
@@ -67,12 +68,12 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 		ArrayList<Integer> children = childrenList.get(nodeIndex);
 		if(children.size() > 0)
 		{
-			for(int i = 0; i < children.size(); i++)
-			{
-				if(i >= children.size() / 2 && nodeList.get(nodeIndex) != null)
-					list.add(nodeList.get(nodeIndex));
+			int i = 0;
+			for(; i < (int)Math.ceil((double)children.size() / 2); i++)
 				inorderOrderTraversal(children.get(i), list);
-			}
+			list.add(nodeList.get(nodeIndex));
+			for(; i < children.size(); i++)
+				inorderOrderTraversal(children.get(i), list);
 		}
 		else
 			list.add(nodeList.get(nodeIndex));
@@ -117,30 +118,18 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
-	public Collection<E> leaves() {
-		if(nodeList.isEmpty())
-			return new ArrayList<E>();
-		else
+	public List<E> leaves() {
+		LinkedList<E> list = new LinkedList<E>();
+		if(!nodeList.isEmpty())
 		{
-			LinkedList<Integer> queue = new LinkedList<Integer>();
-			queue.add(0);
-			return leaves(new ArrayList<E>(), queue);
-		}
-	}
-	private Collection<E> leaves(ArrayList<E> list, LinkedList<Integer> queue) {
-		if(!queue.isEmpty())
-		{
-			ArrayList<Integer> children = childrenList.get(queue.getFirst());
-			if(children.isEmpty())
-				list.add(nodeList.get(queue.getFirst()));
-			for(int i = 0; i < children.size(); i++)
-				queue.add(children.get(i));
-			queue.remove();
-			leaves(list, queue);
+			E e;
+			for(int i = nodeList.size() - 1; i >= 0; i--)
+				if(childrenList.get(i).isEmpty() && (e = nodeList.get(i)) != null)
+					list.addFirst(e);
 		}
 		return list;
 	}
-	public Collection<E> siblings(E e) throws NodeNotFoundException
+	public List<E> siblings(E e) throws NodeNotFoundException
 	{
 		checkNode(e);
 		E parent = parent(e);
@@ -151,12 +140,11 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 			return children;
 		}
 		else
-			throw new NodeNotFoundException("parent could not be found for the child object");		
+			return new ArrayList<E>();
 	}
 	public E parent(E e) throws NodeNotFoundException
 	{
-		if(e == null)
-			throw new IllegalArgumentException("Null nodes are not allowed");
+		checkNode(e);
 		int index = nodeList.indexOf(e);
 		if(index == 0)
 			return null;
@@ -191,7 +179,7 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 				childrenList.get(parentIndex).add(nodeList.size() - 1);
 				childrenList.add(new ArrayList<Integer>());
 				size++;
-				int currentDepth = 1;
+				int currentDepth = 2;
 				while(parentIndex != 0)
 				{
 					parentIndex = parentList.get(parentIndex);

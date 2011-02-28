@@ -21,7 +21,9 @@ import java.util.Collection;
  * {@link Collection} add(Object) and addAll(Collection c) methods always adds the first element as root and later
  * ones as children of the root. It is better to use methods of {@link Tree} interface - add(E, E) and 
  * add(E, Collection&lt;E&gt; c) as give better control on the tree structure.
- * This interface doesn't guarantee any order to be maintained among the children of the tree
+ * This interface doesn't guarantee any order to be maintained among the children of the tree. All the elements
+ * in the tree are guaranteed to be unique. Add method returns false if a duplicate element is tried to be added.
+ * The original object is not replaced
  * @author Gaurav Saxena
  *
  * @param <E> object type contained in the tree
@@ -48,7 +50,9 @@ public interface Tree<E> extends Collection<E>{
 	 */
 	public Collection<E> postOrderTraversal();
 	/**
-	 * @return collection of children arranged as inorderOrderTraversal of underlying tree
+	 * @return collection of children arranged as inorderOrderTraversal of underlying tree. In order traversal
+	 * publishes children.size / 2 first and then the node and then nodes from children.size / 2 + 1 to
+	 * children.size
 	 */
 	public Collection<E> inorderOrderTraversal();
 	/**
