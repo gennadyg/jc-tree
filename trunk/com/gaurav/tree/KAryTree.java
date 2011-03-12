@@ -1,5 +1,3 @@
-package com.gaurav.tree;
-
 /*
  * Copyright 2010 Gaurav Saxena
  * 
@@ -13,16 +11,17 @@ package com.gaurav.tree;
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.gaurav.tree;
+
 import java.util.List;
 
 
 /**
- * This tree allows addition of at most k-children to any parent and maintains insertion order among children
+ * This tree allows addition of at most k-children to any parent
  * @author Gaurav Saxena
  * @param <E>
  */
 public class KAryTree<E> extends ArrayListTree<E> {
-	private static final long serialVersionUID = 1783745590577898841L;
 	private int k;
 	public KAryTree(int k) {
 		this.k = k;
@@ -32,15 +31,22 @@ public class KAryTree<E> extends ArrayListTree<E> {
 		if(children(parent).size() < k)
 			return add(parent, child);
 		else
-			throw new IllegalArgumentException("Cannot add more than " + k +" children to a parent");
+			throw new IndexOutOfBoundsException("Cannot add more than " + k +" children to a parent");
 	}
+	/**
+	 * @param e the parent node
+	 * @param index index of child requested
+	 * @return child present at index among the children of e, if the index is less than number of children of e,
+	 * null otherwise
+	 * @throws NodeNotFoundException
+	 */
 	public E child(E e, int index) throws NodeNotFoundException
 	{
 		List<E> children;
 		if(index > k)
-			throw new IndexOutOfBoundsException(index + "is more than " + k);
+			throw new IndexOutOfBoundsException(index + " cannot be more than " + k);
 		else if(index > (children = children(e)).size())
-			throw new NodeNotFoundException("Index passed is more than " + children.size() + " children of the node");
+			return null;
 		else
 			return children.get(index);
 	}

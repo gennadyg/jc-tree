@@ -13,7 +13,6 @@
  */
 package com.gaurav.tree;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,8 +27,7 @@ import java.util.List;
  *
  * @param <E>
  */
-public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
-	private static final long serialVersionUID = 9188932537753945512L;
+public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	private ArrayList<E> nodeList = new ArrayList<E>();
 	private ArrayList<Integer> parentList = new ArrayList<Integer>();
 	private ArrayList<ArrayList<Integer>> childrenList = new ArrayList<ArrayList<Integer>>();
@@ -236,6 +234,7 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 		parentList.clear();
 		childrenList.clear();
 		size = 0;
+		depth = 0;
 	}
 
 	@Override
@@ -253,7 +252,7 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 
 	@Override
 	public boolean isEmpty() {
-		return size() > 0;
+		return size == 0;
 	}
 
 	@Override
@@ -268,8 +267,10 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 				nodes.add(nodeList.get(i));
 		return nodes;
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
+		checkNode((E)o);
 		int i = nodeList.indexOf(o);
 		if(i > -1)
 			return remove(i);
@@ -352,5 +353,74 @@ public class ArrayListTree<E> implements Tree<E>, Serializable, Cloneable{
 			return null;
 		else
 			return nodeList.get(0);
+	}
+	@Override
+	public E commonAncestor(E node1, E node2) throws NodeNotFoundException {
+		int height1 = 0;
+		E e1 = node1; 
+		while(e1 != null)
+		{
+			height1++;
+			e1 = parent(e1);
+		}
+		int height2 = 0;
+		E e2 = node2; 
+		while(e2 != null)
+		{
+			height2++;
+			e2 = parent(e2);
+		}
+		if(height1 > height2)
+		{
+			while(height1 - height2 > 0)
+			{
+				node1 = parent(node1);
+				height1--;
+			}
+		}
+		else
+		{
+			while(height2 - height1 > 0)
+			{
+				node2 = parent(node2);
+				height2--;
+			}
+		}
+		while(node1 != null && !node1.equals(node2))
+		{
+			node1 = parent(node1);
+			node2 = parent(node2);
+		}
+		return node1;
+	}
+	public boolean isAncestor(E node, E child) throws NodeNotFoundException {
+		child = parent(child);
+		while(child != null)
+		{
+			if(child.equals(node))
+				return true;
+			else
+				child = parent(child);
+		}
+		return false;
+	}
+	@Override
+	public boolean isDescendant(E parent, E node) throws NodeNotFoundException {
+		checkNode(node);
+		int index = nodeList.indexOf(node);
+		E child = parent(node);
+		if(index > -1)
+		{
+			while(child != null)
+			{
+				if(child.equals(parent))
+					return true;
+				else
+					child = parent(child);
+			}
+			return false;
+		}
+		else
+			throw new NodeNotFoundException("No node was found for object");
 	}
 }

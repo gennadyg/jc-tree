@@ -16,41 +16,40 @@ package com.gaurav.tree;
 import java.util.List;
 
 /**
- * This tree allows addition of at most 2 children to a parent and maintains insertion order among children
+ * This tree allows addition of at most 2 children to a parent and maintains insertion order among children. The 
+ * children are added sequentially i.e. the first child is added as left one and the next as right one. To control
+ * the order in which children are inserted use {@link NumberedTree}
  * @author Gaurav Saxena
  * @param <E>
  */
 public class BinaryTree<E> extends KAryTree<E> {
-	private static final long serialVersionUID = -1443609360110831605L;
 	public BinaryTree()
 	{
 		super(2);
 	}
 	/**
 	 * @param e parent node
-	 * @return left child of e
+	 * @return left child of e, if e contains at least 1 child, null otherwise
 	 * @throws NodeNotFoundException in case e is not present in the tree or has no children
 	 */
 	public E left(E e) throws NodeNotFoundException
 	{
 		List<E> children;
 		if((children = children(e)).isEmpty())
-			throw new NodeNotFoundException("The node passed has no children");
+			return null;
 		else
 			return children.get(0);
 	}
 	/**
 	 * @param e parent node
-	 * @return right child of e
+	 * @return right child of e, if there are 2 children of e, null otherwise
 	 * @throws NodeNotFoundException in case e is not present in the tree or has less than 2 children
 	 */
 	public E right(E e) throws NodeNotFoundException
 	{
 		List<E> children;
-		if((children = children(e)).isEmpty())
-			throw new NodeNotFoundException("The node passed has no children");
-		else if(children.size() == 1)
-			throw new NodeNotFoundException("The node passed has only left child");
+		if((children = children(e)).isEmpty() || children.size() == 1)
+			return null;
 		else
 			return children.get(1);
 	}

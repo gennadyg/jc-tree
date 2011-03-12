@@ -16,60 +16,25 @@ package com.gaurav.tree;
 import java.util.Collection;
 
 /**
- * The tree interface is a general interface for all types an their implementations. It extends {@link Collection}
+ * The tree is a general interface for all tree types and their implementations. It extends {@link Collection}
  * and thus all its methods.
- * {@link Collection} add(Object) and addAll(Collection c) methods always adds the first element as root and later
- * ones as children of the root. It is better to use methods of {@link Tree} interface - add(E, E) and 
- * add(E, Collection&lt;E&gt; c) as give better control on the tree structure.
+ * <br>
+ * {@link Collection}::add(Object) and {@link Collection}::addAll(Collection c) methods always adds the first element as root and later
+ * ones as children of the root. It is better to use methods of {@link Tree}::add(E, E) and 
+ * {@link Tree}::add(E, Collection&lt;E&gt; c) as give better control on the tree structure.
+ * <br>
  * This interface doesn't guarantee any order to be maintained among the children of the tree. All the elements
- * in the tree are guaranteed to be unique. Add method returns false if a duplicate element is tried to be added.
- * The original object is not replaced
+ * in the tree are guaranteed to be unique. 
+ * <br>
+ * Null elements are not allowed in the tree.
  * @author Gaurav Saxena
  *
  * @param <E> object type contained in the tree
  */
 public interface Tree<E> extends Collection<E>{
 	/**
-	 * @param e child object
-	 * @return the parent object. Null if e is root
-	 * @throws NodeNotFoundException if e is not found
-	 */
-	public E parent(E e) throws NodeNotFoundException;
-	/**
-	 * @param e parent object
-	 * @return collection of children
-	 * @throws NodeNotFoundException if e is not found
-	 */
-	public Collection<E> children(E e) throws NodeNotFoundException;
-	/**
-	 * @return collection of children arranged as preOrderTraversal of underlying tree
-	 */
-	public Collection<E> preOrderTraversal();
-	/**
-	 * @return collection of children arranged as postOrderTraversal of underlying tree
-	 */
-	public Collection<E> postOrderTraversal();
-	/**
-	 * @return collection of children arranged as inorderOrderTraversal of underlying tree. In order traversal
-	 * publishes children.size / 2 first and then the node and then nodes from children.size / 2 + 1 to
-	 * children.size
-	 */
-	public Collection<E> inorderOrderTraversal();
-	/**
-	 * @return collection of children arranged as levelOrderTraversal of underlying tree
-	 */
-	public Collection<E> levelOrderTraversal();
-	
-	/**
-	 * @return all the leaves of the tree i.e. those nodes which do not have children
-	 */
-	public Collection<E> leaves();
-	/**
-	 * @return all the siblings of the node i.e. those nodes which have the same parent as the parameter
-	 * @throws NodeNotFoundException 
-	 */
-	public Collection<E> siblings(E e) throws NodeNotFoundException;
-	/**
+	 * In case an equal object is already present in the tree then the method returns false and the original 
+	 * object is not replaced. 
 	 * @param parent object to which child object needs to be added. Parent is allowed to be null
 	 * only when there are no other nodes present in the tree. In that case, the child will be added as root
 	 * @param child object 
@@ -86,11 +51,77 @@ public interface Tree<E> extends Collection<E>{
 	 */
 	public boolean addAll(E parent, Collection<? extends E> c);
 	/**
-	 * @return maximum depth of the tree
+	 * @param e parent object
+	 * @return collection of children
+	 * @throws NodeNotFoundException if e is not found
+	 */
+	public Collection<E> children(E e) throws NodeNotFoundException;
+	/**
+	 * Finds the common ancestor of node1 and node2
+	 * @param node1
+	 * @param node2
+	 * @return
+	 * @throws NodeNotFoundException 
+	 */
+	public E commonAncestor(E node1, E node2) throws NodeNotFoundException;
+	/**
+	 * @return depth of the tree i.e. the length of the path which has maximum number of nodes
 	 */
 	public int depth();
+	/**
+	 * @return collection of children arranged as inorderOrderTraversal of underlying tree. In order traversal
+	 * publishes children.size / 2 first and then the node and then nodes from children.size / 2 + 1 to
+	 * children.size
+	 */
+	public Collection<E> inorderOrderTraversal();
+	
+	/**
+	 * Finds if the given node is an ancestor of the child node.
+	 * @param node
+	 * @param child
+	 * @return true if any of the parent of child is equal to node, false otherwise. if node and child node are 
+	 * equal to each other then it returns false
+	 * @throws NodeNotFoundException 
+	 */
+	public boolean isAncestor(E node, E child) throws NodeNotFoundException;
+	/**
+	 * Finds if the given node is a descendant of the parent node
+	 * @param node
+	 * @param parent
+	 * @return true if any of the node belongs to the tree rooted at parent, false otherwise. if node and child 
+	 * node are equal to each other then it returns false
+	 * @throws NodeNotFoundException 
+	 */
+	public boolean isDescendant(E parent, E node) throws NodeNotFoundException;
+	/**
+	 * @return all the leaves of the tree i.e. those nodes which do not have children
+	 */
+	public Collection<E> leaves();
+	/**
+	 * @return collection of children arranged as levelOrderTraversal of underlying tree
+	 */
+	public Collection<E> levelOrderTraversal();
+	/**
+	 * @param e child object
+	 * @return the parent object. Null if e is root
+	 * @throws NodeNotFoundException if e is not found
+	 */
+	public E parent(E e) throws NodeNotFoundException;
+	/**
+	 * @return collection of children arranged as postOrderTraversal of underlying tree
+	 */
+	public Collection<E> postOrderTraversal();
+	/**
+	 * @return collection of children arranged as preOrderTraversal of underlying tree
+	 */
+	public Collection<E> preOrderTraversal();
 	/**
 	 * @return the root node or null if tree is empty
 	 */
 	public E root();
+	/**
+	 * @return all the siblings of the node i.e. those nodes which have the same parent as the parameter
+	 * @throws NodeNotFoundException 
+	 */
+	public Collection<E> siblings(E e) throws NodeNotFoundException;
 }
