@@ -28,27 +28,27 @@ public class BinaryTree<E> extends KAryTree<E> {
 		super(2);
 	}
 	/**
-	 * @param e parent node
+	 * @param parent
 	 * @return left child of e, if e contains at least 1 child, null otherwise
 	 * @throws NodeNotFoundException in case e is not present in the tree or has no children
 	 */
-	public E left(E e) throws NodeNotFoundException
+	public E left(E parent) throws NodeNotFoundException
 	{
 		List<E> children;
-		if((children = children(e)).isEmpty())
+		if((children = children(parent)).isEmpty())
 			return null;
 		else
 			return children.get(0);
 	}
 	/**
-	 * @param e parent node
+	 * @param parent parent node
 	 * @return right child of e, if there are 2 children of e, null otherwise
 	 * @throws NodeNotFoundException in case e is not present in the tree or has less than 2 children
 	 */
-	public E right(E e) throws NodeNotFoundException
+	public E right(E parent) throws NodeNotFoundException
 	{
 		List<E> children;
-		if((children = children(e)).isEmpty() || children.size() == 1)
+		if((children = children(parent)).isEmpty() || children.size() == 1)
 			return null;
 		else
 			return children.get(1);

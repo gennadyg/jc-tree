@@ -14,20 +14,22 @@
 package com.gaurav.tree;
 
 
+/**
+ * This is a BST implementation and requires its nodes to implement {@link Comparable}. 
+ * <br><br>
+ * Also add(E, E) and
+ * add(E, E, int) throw {@link UnsupportedOperationException} because this implementation requires identification
+ * of parents on its own. Thus, only add(E) works. The parent is figured out automatically based on BST rules.
+ * The first node always becomes the root
+ * 
+ * @author Gaurav Saxena
+ *
+ * @param <E>
+ */
 public class BinarySearchTree<E extends Comparable<E>> extends ArrayTree<E> implements Cloneable{
 	
 	public BinarySearchTree() {
 		super(2);
-	}
-	@Override
-	public boolean add(E parent, E child) throws NodeNotFoundException
-	{
-		throw new UnsupportedOperationException("A binary search tree determines parent of a child on its own and hence it is not possible to add the child to any given parent. Please use add(child)");
-	}
-	@Override
-	public boolean add(E parent, E child, int index) throws NodeNotFoundException
-	{
-		throw new UnsupportedOperationException("A binary search tree determines parent of a child on its own and hence it is not possible to add the child to any given parent or index. Please use add(child)");
 	}
 	@Override
 	public boolean add(E child)
@@ -44,6 +46,32 @@ public class BinarySearchTree<E extends Comparable<E>> extends ArrayTree<E> impl
 			e.printStackTrace();
 		}
 		return false;
+	}
+	@Override
+	public boolean add(E parent, E child) throws NodeNotFoundException
+	{
+		throw new UnsupportedOperationException("A binary search tree determines parent of a child on its own and hence it is not possible to add the child to any given parent. Please use add(child)");
+	}
+	@Override
+	public boolean add(E parent, E child, int index) throws NodeNotFoundException
+	{
+		throw new UnsupportedOperationException("A binary search tree determines parent of a child on its own and hence it is not possible to add the child to any given parent or index. Please use add(child)");
+	}
+	/**
+	 * @param parent
+	 * @return the left child if present, or null otherwise
+	 * @throws NodeNotFoundException
+	 */
+	public E left(E parent) throws NodeNotFoundException {
+		return child(parent, 0);
+	}
+	/**
+	 * @param parent
+	 * @return the right child if present, or null otherwise
+	 * @throws NodeNotFoundException
+	 */
+	public E right(E parent) throws NodeNotFoundException {
+		return child(parent, 1);
 	}
 	private E findParent(E root, E child) throws NodeNotFoundException
 	{
@@ -63,11 +91,5 @@ public class BinarySearchTree<E extends Comparable<E>> extends ArrayTree<E> impl
 			else
 				return root;
 		}
-	}
-	public E left(E parent) throws NodeNotFoundException {
-		return child(parent, 0);
-	}
-	public E right(E parent) throws NodeNotFoundException {
-		return child(parent, 1);
 	}
 }

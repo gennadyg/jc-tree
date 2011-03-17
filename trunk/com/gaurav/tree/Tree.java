@@ -60,7 +60,7 @@ public interface Tree<E> extends Collection<E>{
 	 * Finds the common ancestor of node1 and node2
 	 * @param node1
 	 * @param node2
-	 * @return
+	 * @return the common ancestor of the nodes
 	 * @throws NodeNotFoundException 
 	 */
 	public E commonAncestor(E node1, E node2) throws NodeNotFoundException;

@@ -34,18 +34,18 @@ public class KAryTree<E> extends ArrayListTree<E> {
 			throw new IndexOutOfBoundsException("Cannot add more than " + k +" children to a parent");
 	}
 	/**
-	 * @param e the parent node
+	 * @param parent the parent node
 	 * @param index index of child requested
 	 * @return child present at index among the children of e, if the index is less than number of children of e,
 	 * null otherwise
 	 * @throws NodeNotFoundException
 	 */
-	public E child(E e, int index) throws NodeNotFoundException
+	public E child(E parent, int index) throws NodeNotFoundException
 	{
 		List<E> children;
 		if(index > k)
 			throw new IndexOutOfBoundsException(index + " cannot be more than " + k);
-		else if(index > (children = children(e)).size())
+		else if(index > (children = children(parent)).size())
 			return null;
 		else
 			return children.get(index);
