@@ -78,10 +78,7 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 				while(parentIndex != 0)
 				{
 					currentDepth++;
-					if(parentIndex > -1)
-						parentIndex = parentList.get(parentIndex);
-					else
-						break;
+					parentIndex = parentList.get(parentIndex);
 				}
 				depth = Math.max(currentDepth, depth);
 				return true;
