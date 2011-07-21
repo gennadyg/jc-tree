@@ -262,7 +262,7 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	@Override
 	public List<E> levelOrderTraversal()
 	{
-		if(nodeList.isEmpty())
+		if(nodeList.isEmpty() || size == 0)
 			return new ArrayList<E>();
 		else
 		{
@@ -417,12 +417,13 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 		if(index > -1)
 		{
 			Integer parentIndex = parentList.set(index, -1);
-			childrenList.get(parentIndex).remove(Integer.valueOf(index));
+			if(parentIndex > -1)//if node is not root
+				childrenList.get(parentIndex).remove(Integer.valueOf(index));
 			nodeList.set(index, null);
 			size--;
 			ArrayList<Integer> children = childrenList.get(index);
-			for (int j = 0; j < children.size(); j++) 
-				remove(children.get(j).intValue());
+			for (int j = 0; j < children.size();) 
+				remove(children.get(0).intValue());
 			childrenList.get(index).clear();
 			return true;
 		}
