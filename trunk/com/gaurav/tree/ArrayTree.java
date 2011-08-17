@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @param <E>
  */
-class ArrayTree<E> implements NumberedTree<E>, Cloneable {
+public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	private ArrayList<E> nodeList = new ArrayList<E>();
 	private ArrayList<Integer> parentList = new ArrayList<Integer>();
 	private ArrayList<int[]> childrenArray = new ArrayList<int[]>();

@@ -29,8 +29,8 @@ public class BinaryTree<E> extends KAryTree<E> {
 	}
 	/**
 	 * @param parent
-	 * @return left child of e, if e contains at least 1 child, null otherwise
-	 * @throws NodeNotFoundException in case e is not present in the tree or has no children
+	 * @return left child of parent, if parent contains at least 1 child, null otherwise
+	 * @throws NodeNotFoundException in case parent is not present in the tree
 	 */
 	public E left(E parent) throws NodeNotFoundException
 	{
@@ -42,8 +42,8 @@ public class BinaryTree<E> extends KAryTree<E> {
 	}
 	/**
 	 * @param parent parent node
-	 * @return right child of e, if there are 2 children of e, null otherwise
-	 * @throws NodeNotFoundException in case e is not present in the tree or has less than 2 children
+	 * @return right child of parent, if there are 2 children of e, null otherwise
+	 * @throws NodeNotFoundException in case parent is not present in the tree
 	 */
 	public E right(E parent) throws NodeNotFoundException
 	{
