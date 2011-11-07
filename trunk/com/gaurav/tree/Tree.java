@@ -34,7 +34,7 @@ import java.util.Collection;
 public interface Tree<E> extends Collection<E>{
 	/**
 	 * In case an equal object is already present in the tree then the method returns false and the original 
-	 * object is not replaced. 
+	 * object is replaced. 
 	 * @param parent object to which child object needs to be added. Parent is allowed to be null
 	 * only when there are no other nodes present in the tree. In that case, the child will be added as root
 	 * @param child object 
