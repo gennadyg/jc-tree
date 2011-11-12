@@ -38,7 +38,7 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	private int size = 0;
 	private int depth = 0;
 	private int maxChildren;
-	private int rootIndex;
+	private int rootIndex = -1;
 	
 	public ArrayTree(int maxChildren) {
 		this.maxChildren = maxChildren;
@@ -51,10 +51,8 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 				return add(null, e);
 			else
 				return add(nodeList.get(rootIndex), e);
-		}
-		catch(NodeNotFoundException ex)
-		{
-			throw new IllegalArgumentException(ex);
+		} catch(NodeNotFoundException ex) {
+			throw new IllegalArgumentException(ex);//This should never happen as when tree is empty, we are adding the root and when it is not then we are adding to the root, which will always be present in a non-empty tree
 		}
 	}
 	/**
@@ -68,12 +66,10 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		if(isRootElementBeingAdded(parent, child))
 			return true;
 		int	parentIndex = nodeList.indexOf(parent);
-		if(parentIndex > -1)
-		{
+		if(parentIndex > -1) {
 			int childIndex = nodeList.indexOf(child);
 			int emptySlot;
-			if(childIndex == -1)
-			{
+			if(childIndex == -1) {
 				if((emptySlot = getEmptySlot(childrenArray.get(parentIndex))) > -1) {
 					addChild(child, parentIndex, emptySlot);
 					return true;
@@ -83,19 +79,15 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 				nodeList.set(childIndex, child);
 				return false;
 			}
-		}
-		else
+		} else
 			throw new NodeNotFoundException("No node was found for parent object");
 	}
 	private boolean isRootElementBeingAdded(E parent, E child) {
-		if(parent == null)
-		{
-			if(isEmpty())
-			{
+		if(parent == null) {
+			if(isEmpty()) {
 				addRoot(child);
 				return true;
-			}
-			else
+			} else
 				throw new IllegalArgumentException("parent cannot be null except for root element");
 		} else
 			return false;
@@ -108,17 +100,13 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		if(isRootElementBeingAdded(parent, child))
 			return true;
 		int	parentIndex = nodeList.indexOf(parent);
-		if(parentIndex > -1)
-		{
-			if(nodeList.indexOf(child) == -1)
-			{
+		if(parentIndex > -1) {
+			if(nodeList.indexOf(child) == -1) {
 				addChild(child, parentIndex, index);
 				return true;
-			}
-			else
+			} else
 				return false;
-		}
-		else
+		} else
 			throw new NodeNotFoundException("No node was found for parent object");
 	}
 
@@ -140,42 +128,34 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 			for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
 				add(parent, iterator.next());
 			return true;
-		}
-		catch(NodeNotFoundException ex)
-		{
+		} catch(NodeNotFoundException ex) {
 			return false;
 		}
 	}
 	@Override
-	public E child(E parent, int index) throws NodeNotFoundException
-	{
+	public E child(E parent, int index) throws NodeNotFoundException {
 		checkNode(parent);
 		int parentIndex = nodeList.indexOf(parent);
 		int childIndex;
-		if(parentIndex > -1)
-		{
+		if(parentIndex > -1) {
 			if((childIndex = childrenArray.get(parentIndex)[index]) > -1)
 				return nodeList.get(childIndex);
 			else
 				return null;
-		}
-		else
+		} else
 			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
-	public List<E> children(E e) throws NodeNotFoundException
-	{
+	public List<E> children(E e) throws NodeNotFoundException {
 		checkNode(e);
 		int index = nodeList.indexOf(e);
-		if(index > -1)
-		{
+		if(index > -1) {
 			ArrayList<E> children = new ArrayList<E>();
 			for (int i = 0; i < childrenArray.get(index).length; i++)
 				if(childrenArray.get(index)[i] > -1)
 					children.add(nodeList.get(childrenArray.get(index)[i]));
 			return children;
-		}
-		else
+		} else
 			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
@@ -185,11 +165,11 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		childrenArray.clear();
 		size = 0;
 		depth = 0;
+		rootIndex = -1;
 	}
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object clone()
-	{
+	public Object clone() {
 		ArrayTree<E> v = null;
 		try {
 			v = (ArrayTree<E>) super.clone();
@@ -200,7 +180,6 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 			v.depth = this.depth;
 			for(int i = 0; i < childrenArray.size(); i++)
 				v.childrenArray.add(Arrays.copyOf(childrenArray.get(i), childrenArray.get(i).length));
-			    	
 		} catch (CloneNotSupportedException e) {
 			//This should't happen because we are cloneable
 		}
@@ -212,36 +191,28 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		checkNode(node2);
 		int height1 = 0;
 		E e1 = node1; 
-		while(e1 != null)
-		{
+		while(e1 != null) {
 			height1++;
 			e1 = parent(e1);
 		}
 		int height2 = 0;
 		E e2 = node2; 
-		while(e2 != null)
-		{
+		while(e2 != null) {
 			height2++;
 			e2 = parent(e2);
 		}
-		if(height1 > height2)
-		{
-			while(height1 - height2 > 0)
-			{
+		if(height1 > height2) {
+			while(height1 - height2 > 0) {
 				node1 = parent(node1);
 				height1--;
 			}
-		}
-		else
-		{
-			while(height2 - height1 > 0)
-			{
+		} else {
+			while(height2 - height1 > 0) {
 				node2 = parent(node2);
 				height2--;
 			}
 		}
-		while(node1 != null && !node1.equals(node2))
-		{
+		while(node1 != null && !node1.equals(node2)) {
 			node1 = parent(node1);
 			node2 = parent(node2);
 		}
@@ -262,18 +233,24 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	public int depth() {
 		return depth;
 	}
-	public List<E> inorderOrderTraversal()
-	{
+	@Override
+	@Deprecated
+	public List<E> inorderOrderTraversal() {
 		return inorderOrderTraversal(0, new ArrayList<E>());
+	}
+	@Override
+	public List<E> inOrderTraversal() {
+		if(isEmpty())
+			return new ArrayList<E>();
+		else
+			return inorderOrderTraversal(rootIndex, new ArrayList<E>());
 	}
 	@Override
 	public boolean isAncestor(E node, E child) throws NodeNotFoundException {
 		checkNode(child);
 		child = parent(child);
-		if(node != null)//if parent is root, it has to be an ancestor
-		{
-			while(child != null)
-			{
+		if(node != null) {//if parent is root, it has to be an ancestor
+			while(child != null) {
 				if(child.equals(node))
 					return true;
 				else
@@ -287,18 +264,15 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		checkNode(node);
 		int index = nodeList.indexOf(node);
 		E child = parent(node);
-		if(index > -1)
-		{
-			while(child != null)
-			{
+		if(index > -1) {
+			while(child != null) {
 				if(child.equals(parent))
 					return true;
 				else
 					child = parent(child);
 			}
 			return false;
-		}
-		else
+		} else
 			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
@@ -311,32 +285,41 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	}
 	@Override
 	public List<E> leaves() {
-		LinkedList<E> list = new LinkedList<E>();
-		if(!isEmpty())
-		{
-			E e;
-			for(int i = nodeList.size() - 1; i >= 0; i--)
-				if(isChildrenArrayEmpty(childrenArray.get(i))&& (e = nodeList.get(i)) != null)
-					//checking for null because after deleting the list may contain null
-					list.addFirst(e);
-		}
-		return new ArrayList<E>(list);
-	}
-	@Override
-	public List<E> levelOrderTraversal()
-	{
 		if(isEmpty())
 			return new ArrayList<E>();
 		else
-		{
+			return leaves(rootIndex, new ArrayList<E>());
+	}
+	private List<E> leaves(int nodeIndex, ArrayList<E> list) {
+		int[] children = childrenArray.get(nodeIndex);
+		if(children.length > 0)	{
+			int i = 0;
+			int chidrenLength = children.length;
+			for(int len = (int)Math.ceil((double)chidrenLength / 2); i < len; i++)
+				if(children[i] > -1)
+					leaves(children[i], list);
+			if(isChildrenArrayEmpty(childrenArray.get(nodeIndex)))
+				list.add(nodeList.get(nodeIndex));
+			for(int len = chidrenLength; i < len; i++)
+				if(children[i] > -1)
+					leaves(children[i], list);
+		}
+		else if(isChildrenArrayEmpty(childrenArray.get(nodeIndex)))
+			list.add(nodeList.get(nodeIndex));
+		return list;
+	}
+	@Override
+	public List<E> levelOrderTraversal() {
+		if(isEmpty())
+			return new ArrayList<E>();
+		else {
 			LinkedList<Integer> queue = new LinkedList<Integer>();
 			queue.add(0);
 			return levelOrderTraversal(new ArrayList<E>(), queue);
 		}
 	}
 	@Override
-	public E parent(E e) throws NodeNotFoundException
-	{
+	public E parent(E e) throws NodeNotFoundException {
 		checkNode(e);
 		int index = nodeList.indexOf(e);
 		if(index == 0)
@@ -347,22 +330,31 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 			throw new NodeNotFoundException("No node was found for object");
 	}
 	@Override
-	public List<E> postOrderTraversal()
-	{
-		return postOrderTraversal(0, new ArrayList<E>());
+	public List<E> postOrderTraversal() {
+		if(isEmpty())
+			return new ArrayList<E>();
+		else
+			return postOrderTraversal(rootIndex, new ArrayList<E>());
 	}
-	public List<E> preOrderTraversal()
-	{
-		return preOrderTraversal(0, new ArrayList<E>());
+	public List<E> preOrderTraversal() {
+		if(isEmpty())
+			return new ArrayList<E>();
+		else
+			return preOrderTraversal(rootIndex, new ArrayList<E>());
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		checkNode((E)o);
 		int i = nodeList.indexOf(o);
-		if(i > -1)
-			return remove(i);
-		else
+		if(i > -1) {
+			boolean wasRemoved = remove(i);
+			if(i != rootIndex)
+				depth = recalculateDepth(rootIndex, 0);
+			else
+				depth = 0;
+			return wasRemoved;
+		} else
 			return false;
 	}
 	@Override
@@ -375,13 +367,7 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		boolean retVal = false;
-		for (Iterator<E> iterator = nodeList.iterator(); iterator.hasNext();) {
-			E object = iterator.next();
-			if(!c.contains(object))
-				retVal |= remove(object);
-		}
-		return retVal;
+		throw new UnsupportedOperationException("Tree interface doesn't support retainAll");
 	}
 
 	@Override
@@ -392,12 +378,10 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 			return nodeList.get(rootIndex);
 	}
 	@Override
-	public List<E> siblings(E e) throws NodeNotFoundException
-	{
+	public List<E> siblings(E e) throws NodeNotFoundException {
 		checkNode(e);
 		E parent = parent(e);
-		if(parent != null)
-		{
+		if(parent != null) {
 			List<E> children = children(parent);
 			children.remove(e);
 			return children;
@@ -427,8 +411,7 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		childrenArray.add(children);
 		size++;
 		int currentDepth = 2;
-		while(parentIndex != 0)
-		{
+		while(parentIndex != 0)	{
 			parentIndex = parentList.get(parentIndex);
 			currentDepth++;
 		}
@@ -452,11 +435,7 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	}
 
 	private List<E> getCurrentList() {
-		List<E> nodes = new ArrayList<E>();
-		for(int i = 0;i < nodes.size(); i++)
-			if(nodeList.get(i) != null)
-				nodes.add(nodeList.get(i));
-		return nodes;
+		return inOrderTraversal();
 	}
 	private int getEmptySlot(int[] children) {
 		for (int i = 0; i < children.length; i++)
@@ -466,14 +445,13 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	}
 	private List<E> inorderOrderTraversal(int nodeIndex, ArrayList<E> list) {
 		int[] children = childrenArray.get(nodeIndex);
-		if(children.length > 0)
-		{
+		if(children.length > 0)	{
 			int i = 0;
-			for(; i < (int)Math.ceil((double)children.length / 2); i++)
+			for(int len = (int)Math.ceil((double)children.length / 2); i < len; i++)
 				if(children[i] > -1)
 					inorderOrderTraversal(children[i], list);
 			list.add(nodeList.get(nodeIndex));
-			for(; i < children.length; i++)
+			for(int len = children.length; i < len; i++)
 				if(children[i] > -1)
 					inorderOrderTraversal(children[i], list);
 		}
@@ -488,23 +466,20 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		return true;
 	}
 	private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
-		if(!queue.isEmpty())
-		{
+		if(!queue.isEmpty()) {
 			list.add(nodeList.get(queue.getFirst()));
-			int[] children = childrenArray.get(queue.getFirst());
-			for(int i = 0; i < children.length; i++)
-				if(children[i] > -1)
-					queue.add(children[i]);
+			for(int i : childrenArray.get(queue.getFirst()))
+				if(i > -1)
+					queue.add(i);
 			queue.remove();
 			levelOrderTraversal(list, queue);
 		}
 		return list;
 	}
 	private List<E> postOrderTraversal(int nodeIndex, ArrayList<E> list) {
-		int[] children = childrenArray.get(nodeIndex);
-		for(int i = 0; i < children.length; i++)
-			if(children[i] > -1)
-				postOrderTraversal(children[i], list);
+		for(int  i :  childrenArray.get(nodeIndex))
+			if(i > -1)
+				postOrderTraversal(i, list);
 		if(nodeList.get(nodeIndex) != null)
 			list.add(nodeList.get(nodeIndex));
 		return list;
@@ -512,35 +487,34 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	private List<E> preOrderTraversal(int nodeIndex, ArrayList<E> list) {
 		if(nodeList.get(nodeIndex) != null)
 			list.add(nodeList.get(nodeIndex));
-		int[] children = childrenArray.get(nodeIndex);
-		for(int i = 0; i < children.length; i++)
-			if(children[i] > -1)
-				preOrderTraversal(children[i], list);
+		for(int i : childrenArray.get(nodeIndex))
+			if(i > -1)
+				preOrderTraversal(i, list);
 		return list;
 	}
 	private boolean remove(int index) {
 		checkIndex(index);
-		if(index == rootIndex) {
-			rootIndex = 0;
-			size = 0;
-			depth = 0;
-			nodeList.clear();
-			parentList.clear();
-			childrenArray.clear();
-			return true;
-		} else if(index > -1) {
-			Integer parentIndex = parentList.set(index, -1);
-			for(int i = 0; i < childrenArray.get(parentIndex).length; i++)
-				if(childrenArray.get(parentIndex)[i] == index)
-					childrenArray.get(parentIndex)[i] = -1;
-			nodeList.set(index, null);
-			size--;
-			int[] children = childrenArray.get(index);
-			for (int j = 0; j < children.length; j++) 
-				remove(children[j]);
-			Arrays.fill(childrenArray.get(index), -1);
-			depth = recalculateDepth(index, 0);
-			return true;
+		if(index > -1) {
+			if(index == rootIndex) {
+				rootIndex = -1;
+				size = 0;
+				nodeList.clear();
+				parentList.clear();
+				childrenArray.clear();
+				return true;
+			} else {
+				Integer parentIndex = parentList.set(index, -1);
+				for(int i = 0; i < childrenArray.get(parentIndex).length; i++)
+					if(childrenArray.get(parentIndex)[i] == index)
+						childrenArray.get(parentIndex)[i] = -1;
+				nodeList.set(index, null);
+				size--;
+				int[] children = childrenArray.get(index);
+				for (int j = 0; j < children.length; j++) 
+					remove(children[j]);
+				Arrays.fill(childrenArray.get(index), -1);
+				return true;
+			} 
 		} else
 			return false;
 	}

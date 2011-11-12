@@ -48,8 +48,9 @@ public interface Tree<E> extends Collection<E>{
 	 * only when there are no other nodes present in the tree. In that case, the child will be added as root 
 	 * @param c collection of children to be added to parent
 	 * @return true if collection changed as a result of the operation, otherwise false
+	 * @throws NodeNotFoundException 
 	 */
-	public boolean addAll(E parent, Collection<? extends E> c);
+	public boolean addAll(E parent, Collection<? extends E> c) throws NodeNotFoundException;
 	/**
 	 * @param e parent object
 	 * @return collection of children
@@ -69,16 +70,25 @@ public interface Tree<E> extends Collection<E>{
 	 */
 	public int depth();
 	/**
+	 * Deprecated in favor of better named {@link #inOrderTraversal()} <br> 
+	 * This will be deleted in upcoming versions
 	 * @return collection of children arranged as inorderOrderTraversal of underlying tree. In order traversal
 	 * publishes children.size / 2 first and then the node and then nodes from children.size / 2 + 1 to
 	 * children.size
 	 */
+	@Deprecated
 	public Collection<E> inorderOrderTraversal();
+	/**
+	 * @return collection of children arranged as inorderOrderTraversal of underlying tree. In order traversal
+	 * publishes children.size / 2 first and then the node and then nodes from children.size / 2 + 1 to
+	 * children.size
+	 */
+	public Collection<E> inOrderTraversal();
 	
 	/**
 	 * Finds if the given node is an ancestor of the child node.
-	 * @param node
-	 * @param child
+	 * @param node the node to search
+	 * @param child the ancestors of this will be searched for the node
 	 * @return true if any of the parent of child is equal to node, false otherwise. if node and child node are 
 	 * equal to each other then it returns false
 	 * @throws NodeNotFoundException 
@@ -86,8 +96,8 @@ public interface Tree<E> extends Collection<E>{
 	public boolean isAncestor(E node, E child) throws NodeNotFoundException;
 	/**
 	 * Finds if the given node is a descendant of the parent node
-	 * @param node
-	 * @param parent
+	 * @param node the node to search
+	 * @param parent the descendents of this will be searched for the node
 	 * @return true if any of the node belongs to the tree rooted at parent, false otherwise. if node and child 
 	 * node are equal to each other then it returns false
 	 * @throws NodeNotFoundException 

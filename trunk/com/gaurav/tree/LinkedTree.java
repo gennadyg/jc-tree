@@ -40,20 +40,20 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 			else
 				return add(root.element, e);
 		} catch(NodeNotFoundException ex) {
-			return false;
+			throw new IllegalArgumentException(ex);//This should never happen as when tree is empty, we are adding the root and when it is not then we are adding to the root, which will always be present in a non-empty tree
 		}
 	}
 	@Override
 	public boolean add(E parent, E child) throws NodeNotFoundException {
 		checkNode(child);
 		if(parent == null) {
-			if(size == 0) {
+			if(isEmpty()) {
 				root = new Entry<E>(child, null);
 				size++;
 				depth++;
 				return true;
 			} else
-				throw new IllegalArgumentException("parent cannot be null except for root element");
+				throw new NullPointerException("parent cannot be null except for root element");
 		}
 		Entry<E> parentEntry = getNode(parent);
 		Entry<E> childEntry = getNode(child);
@@ -62,6 +62,7 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 				parentEntry.children.add(new Entry<E>(child, parentEntry));
 				size++;
 				int currentDepth = 1;
+				//TODO extract to a new method
 				while(parentEntry != null) {
 					currentDepth++;
 					parentEntry = parentEntry.parent;
@@ -91,24 +92,21 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		}
 		return null;
 	}
-	protected int getChildAddPosition(List<E> children, E child) throws NodeNotFoundException {
+	protected int getChildAddPosition(List<E> children, E child) {
 		return children.size();
 	}
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		boolean retVal = false;
-		for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
-			retVal |= add(iterator.next());
+		for (E e : c)
+			retVal |= add(e);
 		return retVal;
 	}
-	public boolean addAll(E parent, Collection<? extends E> c) {
-		try{
-			for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
-				add(parent, iterator.next());
-			return true;
-		} catch(NodeNotFoundException ex) {
-			return false;
-		}
+	public boolean addAll(E parent, Collection<? extends E> c) throws NodeNotFoundException {
+		boolean retVal = false;
+		for (E e : c)
+			retVal |= add(parent, e);
+		return retVal;
 	}
 	@Override
 	public List<E> children(E e) throws NodeNotFoundException {
@@ -121,7 +119,7 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 	}
 	@Override
 	public void clear() {
-		root.children = new ArrayList<LinkedTree.Entry<E>>();
+		root = null;
 		size = 0;
 		depth = 0;
 	}
@@ -132,7 +130,6 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		try {
 			v = (LinkedTree<E>) super.clone();
 			makeTree(v);
-			v.root = this.root;
 		} catch (CloneNotSupportedException e) {
 			//This should't happen because we are cloneable
 		}
@@ -143,6 +140,7 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		LinkedList<Entry<E>> newQueue = new LinkedList<Entry<E>>();
 		queue.add(root);
 		newQueue.add(new Entry<E>(root.element, null));
+		v.root = newQueue.getFirst();
 		while(!queue.isEmpty()) {
 			Entry<E> parent = newQueue.poll();
 			for(Entry<E> i : queue.poll().children) {
@@ -203,8 +201,16 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		return depth;
 	}
 	@Override
+	@Deprecated
 	public List<E> inorderOrderTraversal() {
-		return inorderOrderTraversal(root);
+		return inOrderTraversal(root);
+	}
+	@Override
+	public List<E> inOrderTraversal() {
+		if(isEmpty())
+			return new ArrayList<E>();
+		else
+			return inOrderTraversal(root);
 	}
 	@Override
 	public boolean isAncestor(E node, E child) throws NodeNotFoundException {
@@ -243,19 +249,25 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 	}
 	@Override
 	public List<E> leaves() {
-		if(size == 0)
-			return leaves(root);
-		else
+		if(isEmpty())
 			return new ArrayList<E>();
+		else
+			return leaves(root);
 	}
 	private List<E> leaves(Entry<E> node) {
-		List<E> leavesList = new ArrayList<E>(size / 2);
-		for(Entry<E> i : node.children)
-			if(i.children.isEmpty())
-				leavesList.add(i.element);
-			else
-				leavesList.addAll(leaves(i));
-		return leavesList;
+		List<Entry<E>> children = node.children;
+		List<E> list = new ArrayList<E>();
+		if(children.size() > 0) {
+			int i = 0;
+			for(int len = (int)Math.ceil((double)children.size() / 2); i < len; i++)
+				leaves(node.children.get(i));
+			if(node.children.isEmpty())
+				list.add(node.element);
+			for(int len = children.size(); i < len; i++)
+				leaves(node.children.get(i));
+		} else if(node.children.isEmpty())
+			list.add(node.element);
+		return list;
 	}
 	@Override
 	public List<E> levelOrderTraversal() {
@@ -302,44 +314,39 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		Entry<E> node = getNode((E) o);
 		if(node != null) {
 			boolean isRemoved; 
-			if(!node.equals(root)) {
-				isRemoved = node.parent.children.remove(node);
-				size = 0;
-				depth = recalculateDepthAndSize(root, 0);
-			} else {
+			if(node.equals(root)) {
 				root = null;
 				isRemoved = true;
 				depth = 0;
 				size = 0;
+			} else {
+				isRemoved = node.parent.children.remove(node);
+				size = 0;
+				depth = 0;
+				recalculateDepthAndSize(root, 0);
 			}
 			return isRemoved;
 		} else
 			return false;
 	}
 
-	private int recalculateDepthAndSize(Entry<E> node, int depth) {
-		int childDepth = depth + 1;
+	private int recalculateDepthAndSize(Entry<E> node, int currentDepth) {
+		int childDepth = currentDepth + 1;
 		size++;
-		for(Entry<E> i : node.children) {
+		for(Entry<E> i : node.children)
 			depth = Math.max(depth, recalculateDepthAndSize(i, childDepth));
-		}
 		return depth;
 	}
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean retVal = false;
-		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();)
-			retVal |= remove(iterator.next());
+		for (Object e: c)
+			retVal |= remove(e);
 		return retVal;
 	}
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		boolean retVal = false;
-		for (E i : getCurrentList()) {
-			if(!c.contains(i))
-				retVal |= remove(i);
-		}
-		return retVal;
+		throw new UnsupportedOperationException("Tree interface doesn't support retainAll");
 	}
 	@Override
 	public E root() {
@@ -356,8 +363,7 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 			List<E> children = children(parent);
 			children.remove(e);
 			return children;
-		}
-		else
+		} else
 			return new ArrayList<E>();
 	}
 
@@ -381,20 +387,19 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 			throw new IllegalArgumentException("null nodes are not allowed");
 	}
 	private List<E> getCurrentList() {
-		return inorderOrderTraversal();
+		return inOrderTraversal();
 	}
-	private List<E> inorderOrderTraversal(Entry<E> node) {
+	private List<E> inOrderTraversal(Entry<E> node) {
 		List<Entry<E>> children = node.children;
 		List<E> list = new ArrayList<E>();
 		if(children.size() > 0) {
 			int i = 0;
-			for(; i < (int)Math.ceil((double)children.size() / 2); i++)
-				inorderOrderTraversal(node.children.get(i));
+			for(int len = (int)Math.ceil((double)children.size() / 2); i < len; i++)
+				inOrderTraversal(node.children.get(i));
 			list.add(node.element);
-			for(; i < children.size(); i++)
-				inorderOrderTraversal(node.children.get(i));
-		}
-		else
+			for(int len = children.size(); i < len; i++)
+				inOrderTraversal(node.children.get(i));
+		} else
 			list.add(node.element);
 		return list;
 	}
@@ -409,18 +414,16 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 	}
 	private List<E> postOrderTraversal(Entry<E> node) {
 		ArrayList<E> list = new ArrayList<E>();
-		List<Entry<E>> children = node.children;
-		for(int i = 0; i < children.size(); i++)
-			list.addAll(postOrderTraversal(node.children.get(i)));
+		for(Entry<E> i : node.children)
+			list.addAll(postOrderTraversal(i));
 		list.add(node.element);
 		return list;
 	}
 	private List<E> preOrderTraversal(Entry<E> node) {
 		ArrayList<E> list = new ArrayList<E>();
 		list.add(node.element);
-		List<Entry<E>> children = node.children;
-		for(int i = 0; i < children.size(); i++)
-			list.addAll(preOrderTraversal(node.children.get(i)));
+		for(Entry<E> i : node.children)
+			list.addAll(preOrderTraversal(i));
 		return list;
 	}
 	@Override
