@@ -395,10 +395,10 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		if(children.size() > 0) {
 			int i = 0;
 			for(int len = (int)Math.ceil((double)children.size() / 2); i < len; i++)
-				inOrderTraversal(node.children.get(i));
+				list.addAll(inOrderTraversal(node.children.get(i)));
 			list.add(node.element);
 			for(int len = children.size(); i < len; i++)
-				inOrderTraversal(node.children.get(i));
+				list.addAll(inOrderTraversal(node.children.get(i)));
 		} else
 			list.add(node.element);
 		return list;
