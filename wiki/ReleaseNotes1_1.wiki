@@ -1,10 +1,9 @@
 #labels Featured
-Release Notes for version jc-Tree_1.1
+=Release Notes for version jc-Tree_1.1=
+This release fixes bug and makes available and some minor enhacements have been made like addition of *LinkedTree* and *SortedChidlrenTree*.
 
-Some minor enhacements have been made like addition of *LinkedTree* and *SortedChidlrenTree*.
 
-
-= Details =
+== Details ==
 
 Fixes:
 
