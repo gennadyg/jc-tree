@@ -1,3 +1,4 @@
+#labels Featured
 Release Notes for version jc-Tree_1.1
 
 Some minor enhacements have been made like addition of *LinkedTree* and *SortedChidlrenTree*.
