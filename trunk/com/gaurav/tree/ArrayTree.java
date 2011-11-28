@@ -493,7 +493,6 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		return list;
 	}
 	private boolean remove(int index) {
-		checkIndex(index);
 		if(index > -1) {
 			if(index == rootIndex) {
 				rootIndex = -1;
@@ -520,8 +519,11 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	}
 	private int recalculateDepth(int index, int depth) {
 		int childDepth = depth + 1;
+		if(isChildrenArrayEmpty(childrenArray.get(index)))
+			return childDepth;
 		for(int i : childrenArray.get(index))
-			depth = Math.max(depth, recalculateDepth(i, childDepth));
+			if(i != -1)
+				depth = Math.max(depth, recalculateDepth(i, childDepth));
 		return depth;
 	}
 	@Override

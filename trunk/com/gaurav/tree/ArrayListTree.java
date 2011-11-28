@@ -96,7 +96,7 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	 * This method lets the sub-classes define the position at which new child may be added 
 	 * @param children
 	 * @param child
-	 * @return
+	 * @return index at which new child will be added
 	 * @throws NodeNotFoundException
 	 */
 	protected int getChildAddPosition(List<E> children, E child) {
@@ -442,7 +442,9 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	}
 	private int recalculateDepth(int index, int depth) {
 		int childDepth = depth + 1;
-		for(Integer i : childrenList.get(index))
+		if(childrenList.get(index).isEmpty())
+			return childDepth;
+		else for(Integer i : childrenList.get(index))
 			depth = Math.max(depth, recalculateDepth(i, childDepth));
 		return depth;
 	}

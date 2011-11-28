@@ -333,7 +333,9 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 	private int recalculateDepthAndSize(Entry<E> node, int currentDepth) {
 		int childDepth = currentDepth + 1;
 		size++;
-		for(Entry<E> i : node.children)
+		if(node.children.isEmpty())
+			return childDepth;
+		else for(Entry<E> i : node.children)
 			depth = Math.max(depth, recalculateDepthAndSize(i, childDepth));
 		return depth;
 	}
