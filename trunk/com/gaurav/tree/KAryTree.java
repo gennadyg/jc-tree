@@ -50,4 +50,11 @@ public class KAryTree<E> extends ArrayListTree<E> {
 		else
 			return children.get(index);
 	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object clone() {
+		KAryTree<E> v = (KAryTree<E>) super.clone();
+		v.k = k;
+		return v;
+	}
 }

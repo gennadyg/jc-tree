@@ -9,7 +9,7 @@ public class SortedChildrenTree<E extends Comparable<E>> extends ArrayListTree<E
 	 * @see com.gaurav.tree.ArrayListTree#getChildAddPosition(java.util.List, java.lang.Object)
 	 */
 	@Override
-	protected int getChildAddPosition(List<E> children, E child) {
-		return -Collections.binarySearch(children, child) - 1;
+	protected int getChildAddPosition(List<E> children, E newChild) {
+		return -Collections.binarySearch(children, newChild) - 1;
 	}
 }

@@ -95,11 +95,10 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	/**
 	 * This method lets the sub-classes define the position at which new child may be added 
 	 * @param children
-	 * @param child
+	 * @param newChild
 	 * @return index at which new child will be added
-	 * @throws NodeNotFoundException
 	 */
-	protected int getChildAddPosition(List<E> children, E child) {
+	protected int getChildAddPosition(List<E> children, E newChild) {
 		return children.size();
 	}
 	@Override
