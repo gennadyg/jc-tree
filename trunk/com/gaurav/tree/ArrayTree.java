@@ -348,11 +348,14 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 		checkNode((E)o);
 		int i = nodeList.indexOf(o);
 		if(i > -1) {
-			boolean wasRemoved = remove(i);
-			if(i != rootIndex)
+			boolean wasRemoved;
+			if(i != rootIndex) {
+				wasRemoved = remove(i);
 				depth = recalculateDepth(rootIndex, 0);
-			else
+			} else {
+				wasRemoved = remove(i);
 				depth = 0;
+			}
 			return wasRemoved;
 		} else
 			return false;
