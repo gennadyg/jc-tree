@@ -391,7 +391,7 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 			list.add(nodeList.get(nodeIndex));
 		return list;
 	}
-	private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
+	/*private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
 		if(!queue.isEmpty()) {
 			list.add(nodeList.get(queue.getFirst()));
 			ArrayList<Integer> children = childrenList.get(queue.getFirst());
@@ -399,6 +399,16 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 				queue.add(children.get(i));
 			queue.remove();
 			levelOrderTraversal(list, queue);
+		}
+		return list;
+	}*/
+	private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
+		while(!queue.isEmpty()) {
+			list.add(nodeList.get(queue.getFirst()));
+			ArrayList<Integer> children = childrenList.get(queue.getFirst());
+			for(int i = 0; i < children.size(); i++)
+				queue.add(children.get(i));
+			queue.remove();
 		}
 		return list;
 	}
