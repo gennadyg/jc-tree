@@ -260,11 +260,11 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 		if(children.size() > 0) {
 			int i = 0;
 			for(int len = (int)Math.ceil((double)children.size() / 2); i < len; i++)
-				leaves(node.children.get(i));
+				list.addAll(leaves(node.children.get(i)));
 			if(node.children.isEmpty())
 				list.add(node.element);
 			for(int len = children.size(); i < len; i++)
-				leaves(node.children.get(i));
+				list.addAll(leaves(node.children.get(i)));
 		} else if(node.children.isEmpty())
 			list.add(node.element);
 		return list;
