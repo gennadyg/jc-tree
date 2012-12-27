@@ -35,6 +35,10 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 	private int depth = 0;
 	private int rootIndex = -1;
 	
+	/**
+	 * If tree is empty, it adds a root. In case tree is not empty, it will attempt to add parameter as a child of the root 
+	 * @see java.util.Collection#add(java.lang.Object)
+	 */
 	@Override
 	public boolean add(E e) {
 		try{
@@ -308,6 +312,10 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 			return preOrderTraversal(rootIndex, new ArrayList<E>());
 	}
 
+	/**
+	 * Removes the sub-tree rooted at the node passed
+	 * @see java.util.Collection#remove(java.lang.Object)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
@@ -326,6 +334,9 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 		} else
 			return false;
 	}
+	/** Removes the sub-tree rooted at the nodes in the collection passed
+	 * @see java.util.Collection#removeAll(java.util.Collection)
+	 */
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean retVal = false;
@@ -391,17 +402,6 @@ public class ArrayListTree<E> implements Tree<E>, Cloneable{
 			list.add(nodeList.get(nodeIndex));
 		return list;
 	}
-	/*private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
-		if(!queue.isEmpty()) {
-			list.add(nodeList.get(queue.getFirst()));
-			ArrayList<Integer> children = childrenList.get(queue.getFirst());
-			for(int i = 0; i < children.size(); i++)
-				queue.add(children.get(i));
-			queue.remove();
-			levelOrderTraversal(list, queue);
-		}
-		return list;
-	}*/
 	private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
 		while(!queue.isEmpty()) {
 			list.add(nodeList.get(queue.getFirst()));

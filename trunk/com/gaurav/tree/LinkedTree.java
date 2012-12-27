@@ -31,7 +31,10 @@ public class LinkedTree<E> implements Tree<E>, Cloneable{
 	private int size = 0;
 	private int depth = 0;
 	private Entry<E> root;
-	
+	/* 
+	 * @see java.util.Collection#add(java.lang.Object)
+	 * If tree is empty, it adds a root. In case tree is not empty, it will attempt to add parameter as a child of the root
+	 */
 	@Override
 	public boolean add(E e) {
 		try{

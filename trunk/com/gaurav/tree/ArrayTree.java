@@ -43,7 +43,10 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 	public ArrayTree(int maxChildren) {
 		this.maxChildren = maxChildren;
 	}
-	
+	/**
+	 * If tree is empty, it adds a root. In case tree is not empty, it will attempt to add parameter as a child of the root 
+	 * @see java.util.Collection#add(java.lang.Object)
+	 */
 	@Override
 	public boolean add(E e) {
 		try{
@@ -468,17 +471,6 @@ public class ArrayTree<E> implements NumberedTree<E>, Cloneable {
 				return false;
 		return true;
 	}
-	/*private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
-		if(!queue.isEmpty()) {
-			list.add(nodeList.get(queue.getFirst()));
-			for(int i : childrenArray.get(queue.getFirst()))
-				if(i > -1)
-					queue.add(i);
-			queue.remove();
-			levelOrderTraversal(list, queue);
-		}
-		return list;
-	}*/
 	private List<E> levelOrderTraversal(ArrayList<E> list, LinkedList<Integer> queue) {
 		while(!queue.isEmpty()) {
 			list.add(nodeList.get(queue.getFirst()));
