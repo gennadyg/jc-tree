@@ -1,6 +1,6 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
 ==Update==
-jc-tree is now available in maven central as _jctree_. I will delete this project shortly and only maintain []. To use jc-tree in your maven based projects, please use the following:
+jc-tree is now available in maven central as _jctree-2.0.0_. Going forward, I will only maintain [https://code.google.com/p/jctree/ jctree]. To use jctree in your maven based projects, please use the following:
 {{{
 <dependency>
   <groupId>com.googlecode.jctree</groupId>
