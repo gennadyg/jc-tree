@@ -1,4 +1,13 @@
 #labels Featured,Phase-Implementation,Phase-Deploy
+==Update==
+jc-tree is now available in maven central as _jctree_. I will delete this project shortly and only maintain []. To use jc-tree in your maven based projects, please use the following:
+{{{
+<dependency>
+  <groupId>com.googlecode.jctree</groupId>
+  <artifactId>jctree</artifactId>
+  <version>2.0.0</version>
+</dependency>
+}}}
 ==Introduction==
 Java collections framework has been most surprisingly bereft of tree implementations. This project is an endeavor to remove this deficiency. 
 
